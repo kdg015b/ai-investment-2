@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Load and display the portfolio
-    fetch('portfolio.json')
+    // Load and display the crypto portfolio
+    fetch('/api/data')
         .then(response => response.json())
         .then(data => {
             const container = document.getElementById('portfolio-container');
@@ -11,15 +11,46 @@ document.addEventListener('DOMContentLoaded', function() {
 
             let html = '<ul>';
             data.forEach(asset => {
-                html += `<li><b>${asset.asset}</b>: ${asset.weight}%</li>`;
+                html += `<li><b>${asset.asset} (${asset.ticker})</b>: ${asset.weight}%`;
+                if (asset.price) {
+                    html += ` - Price: $${asset.price.toFixed(2)}`;
+                }
+                html += '</li>';
             });
             html += '</ul>';
             container.innerHTML = html;
         })
         .catch(error => {
-            console.error('Error fetching portfolio data:', error);
+            console.error('Error fetching crypto portfolio data:', error);
             const container = document.getElementById('portfolio-container');
-            container.innerHTML = '<p>Could not load portfolio data.</p>';
+            container.innerHTML = '<p>Could not load crypto portfolio data.</p>';
+        });
+
+    // Load and display the Korean stock portfolio
+    fetch('/api/korean_stocks')
+        .then(response => response.json())
+        .then(data => {
+            const container = document.getElementById('korean-stock-container');
+            if (!data || data.length === 0) {
+                container.innerHTML = '<p>No Korean stock data available.</p>';
+                return;
+            }
+
+            let html = '<ul>';
+            data.forEach(stock => {
+                html += `<li>
+                    <h4>${stock.name} (${stock.ticker})</h4>
+                    <p><b>선정 이유:</b> ${stock.reason}</p>
+                    <p><b>투자 전략:</b> ${stock.strategy}</p>
+                </li>`;
+            });
+            html += '</ul>';
+            container.innerHTML = html;
+        })
+        .catch(error => {
+            console.error('Error fetching Korean stock data:', error);
+            const container = document.getElementById('korean-stock-container');
+            container.innerHTML = '<p>Could not load Korean stock data.</p>';
         });
 
     // Load and display the news articles
