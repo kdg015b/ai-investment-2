@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
     // Load and display the news articles
-    fetch('news.json')
+    fetch('news.json?t=' + new Date().getTime())
         .then(response => response.json())
         .then(data => {
             const container = document.getElementById('news-container');
